@@ -26,7 +26,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     show-sql: true
     properties:
       hibernate:
@@ -43,7 +43,7 @@ spring:
     activate:
       on-profile: test
   datasource:
-    url: jdbc:h2:mem:test # h2 in-memory-db
+    url: jdbc:h2:mem:test
     driver-class-name: org.h2.Driver
     username: sa
     password:
