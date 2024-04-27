@@ -44,6 +44,10 @@ public class UserApiController {
         return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "회원 목록 조회 성공", users), HttpStatus.OK);
     }
 
+    /**
+     * @Method: updateUser
+     * @Description: 회원 목록 조회
+     */
     @PatchMapping("/api/user/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId, @RequestBody UserUpdateRequest request) {
         UserUpdateResponse response = userService.updateUser(userId, request);

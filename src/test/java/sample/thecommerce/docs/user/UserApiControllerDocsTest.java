@@ -57,7 +57,7 @@ public class UserApiControllerDocsTest extends RestDocsSupport {
 
         given(userService.createUser(any(UserCreateRequest.class)))
                 .willReturn(UserCreateResponse.builder()
-                        .id(1L)
+                        .userId(1L)
                         .username("test")
                         .name("홍길동")
                         .email("test@example.com")
@@ -101,7 +101,7 @@ public class UserApiControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("데이터")
                         ).andWithPrefix("data.",
-                                fieldWithPath("id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("userId").type(JsonFieldType.NUMBER)
                                         .description("회원 ID"),
                                 fieldWithPath("username").type(JsonFieldType.STRING)
                                         .description("사용자명"),
