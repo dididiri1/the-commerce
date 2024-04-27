@@ -11,31 +11,31 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class UserCreateRequest {
 
-    @NotBlank(message = "유저명 타입은 필수입니다.")
+    @NotBlank(message = "유저명은 필수입니다.")
     private String username;
 
-    @NotBlank(message = "패스워드 타입은 필수입니다.")
+    @NotBlank(message = "패스워드는 필수입니다.")
     private String password;
 
-    @NotBlank(message = "닉네임 타입은 필수입니다.")
+    @NotBlank(message = "닉네임은 필수입니다.")
     private String nickname;
 
-    @NotBlank(message = "이름 타입은 필수입니다.")
+    @NotBlank(message = "이름은 필수입니다.")
     private String name;
 
-    @NotBlank(message = "핸드폰번호 타입은 필수입니다.")
-    private String phone;
+    @NotBlank(message = "전화번호는 필수입니다.")
+    private String tel;
 
-    @NotBlank(message = "이메일 타입은 필수입니다.")
+    @NotBlank(message = "이메일은 필수입니다.")
     private String email;
 
     @Builder
-    private UserCreateRequest(String username, String password, String nickname, String name, String phone, String email) {
+    private UserCreateRequest(String username, String password, String nickname, String name, String tel, String email) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         this.name = name;
-        this.phone = phone;
+        this.tel = tel;
         this.email = email;
     }
 
@@ -45,7 +45,7 @@ public class UserCreateRequest {
                 .password(password)
                 .nickname(nickname)
                 .name(name)
-                .phone(phone)
+                .tel(tel)
                 .email(email)
                 .build();
     }

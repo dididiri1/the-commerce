@@ -1,12 +1,15 @@
 package sample.thecommerce.controller.api.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import sample.thecommerce.dto.ApiResponse;
 import sample.thecommerce.dto.user.request.UserCreateRequest;
+import sample.thecommerce.dto.user.response.UserCreateResponse;
+import sample.thecommerce.dto.user.response.UserResponse;
 import sample.thecommerce.service.user.UserService;
 
 import javax.validation.Valid;
@@ -23,9 +26,22 @@ public class UserApiController {
      * @Description: 회원 등록
      */
     @PostMapping("/api/user/join")
-    public ResponseEntity<?> createUser(@RequestBody @Valid UserCreateRequest request, BindingResult bindingResult) {
-        userService.createUser(request);
+    public ResponseEntity<?> createUser(@RequestBody @Valid UserCreateRequest request) {
+        UserCreateResponse response = userService.createUser(request);
 
-        return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CREATED.value(), "회원 등록 성공", null), HttpStatus.CREATED);
+        return new ResponseEntity<>(new ApiResponse<>(HttpStatus.CREATED.value(), "회원 등록 성공", response), HttpStatus.CREATED);
+    }
+
+    /**
+     * @Method: getUsers
+     * @Description: 회원 목록 조회
+     */
+    @GetMapping("/api/user/list")
+    public ResponseEntity<?> getUsers(Pageable pageable) {
+        System.out.println("pageable.getSort() = " + pageable.getSort());
+
+        Page<UserResponse> users = userService.getUsers(pageable);
+
+        return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "회원 목록 조회 성공", users), HttpStatus.OK);
     }
 }

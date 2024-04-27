@@ -2,6 +2,7 @@ package sample.thecommerce.domain.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import sample.thecommerce.domain.BaseEntity;
 
 import javax.persistence.*;
 
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "Users")
-public class User {
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,18 +26,18 @@ public class User {
 
     private String name;
 
-    private String phone;
+    private String tel;
 
     private String email;
 
     @Builder
-    public User(Long id, String username, String password, String nickname, String name, String phone, String email) {
+    public User(Long id, String username, String password, String nickname, String name, String tel, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         this.name = name;
-        this.phone = phone;
+        this.tel = tel;
         this.email = email;
     }
 }
