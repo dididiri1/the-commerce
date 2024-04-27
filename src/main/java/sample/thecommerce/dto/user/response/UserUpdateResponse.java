@@ -7,9 +7,9 @@ import sample.thecommerce.domain.user.User;
 
 @Getter
 @NoArgsConstructor
-public class UserCreateResponse {
+public class UserUpdateResponse {
 
-    private Long id;
+    private Long userId;
 
     private String username;
 
@@ -17,20 +17,24 @@ public class UserCreateResponse {
 
     private String email;
 
+    private String nickname;
+
     @Builder
-    private UserCreateResponse(Long id, String username, String name, String email) {
-        this.id = id;
+    private UserUpdateResponse(Long userId, String username, String name, String email, String nickname) {
+        this.userId = userId;
         this.username = username;
         this.name = name;
         this.email = email;
+        this.nickname = nickname;
     }
 
-    public static UserCreateResponse of(User user) {
-        return UserCreateResponse.builder()
-                .id(user.getId())
+    public static UserUpdateResponse of(User user) {
+        return UserUpdateResponse.builder()
+                .userId(user.getId())
                 .username(user.getUsername())
                 .name(user.getName())
                 .email(user.getEmail())
+                .nickname(user.getNickname())
                 .build();
     }
 }

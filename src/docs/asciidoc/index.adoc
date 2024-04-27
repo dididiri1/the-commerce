@@ -22,3 +22,27 @@ include::{snippets}/user-create/request-fields.adoc[]
 ==== HTTP Response
 include::{snippets}/user-create/http-response.adoc[]
 include::{snippets}/user-create/response-fields.adoc[]
+
+[[user-all]]
+=== 회원 목록 조회
+==== HTTP Request
+include::{snippets}/user-list/http-request.adoc[]
+include::{snippets}/user-list/request-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-list/http-response.adoc[]
+include::{snippets}/user-list/response-fields.adoc[]
+
+[[user-update]]
+=== 회원 수정
+==== HTTP Request
+include::{snippets}/user-update/http-request.adoc[]
+include::{snippets}/user-update/path-parameters.adoc[]
+include::{snippets}/user-update/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/user-update/http-response.adoc[]
+include::{snippets}/user-update/response-fields.adoc[]
+
+
+

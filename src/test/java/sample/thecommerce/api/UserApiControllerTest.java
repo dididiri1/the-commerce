@@ -2,20 +2,13 @@ package sample.thecommerce.api;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import sample.thecommerce.ControllerTestSupport;
 import sample.thecommerce.dto.user.request.UserCreateRequest;
-import sample.thecommerce.dto.user.response.UserResponse;
+import sample.thecommerce.dto.user.request.UserUpdateRequest;
 
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -208,5 +201,29 @@ public class UserApiControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.data").isEmpty());
 
+    }
+
+    @DisplayName("회원 정보를 수정 한다.")
+    @Test
+    void updateMember() throws Exception {
+        //given
+        long userId = 1L;
+
+        UserUpdateRequest request = UserUpdateRequest.builder()
+                .email("test2@gmail.com")
+                .name("김구라")
+                .nickname("춘식이")
+                .build();
+
+        //when //then
+        mockMvc.perform(patch("/api/user/{userId}", userId)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.status").exists())
+                .andExpect(jsonPath("$.message").exists())
+                .andExpect(jsonPath("$.data").isEmpty());;
     }
 }

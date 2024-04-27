@@ -11,8 +11,10 @@ import sample.thecommerce.domain.user.User;
 import sample.thecommerce.domain.user.UserQueryRepository;
 import sample.thecommerce.domain.user.UserRepositoryJpa;
 import sample.thecommerce.dto.user.request.UserCreateRequest;
+import sample.thecommerce.dto.user.request.UserUpdateRequest;
 import sample.thecommerce.dto.user.response.UserCreateResponse;
 import sample.thecommerce.dto.user.response.UserResponse;
+import sample.thecommerce.dto.user.response.UserUpdateResponse;
 import sample.thecommerce.handler.ex.validationException;
 
 
@@ -45,5 +47,29 @@ public class UserService {
 
     public Page<UserResponse> getUsers(Pageable pageable) {
         return userQueryRepository.searchPageUsers(pageable);
+    }
+
+    @Transactional
+    public UserUpdateResponse updateUser(Long userId, UserUpdateRequest request) {
+        User userEntity = validateUserId(userId);
+        if (request.getEmail() != null && !request.getEmail().equals("")) {
+            userEntity.setEmail(request.getEmail());
+        }
+        if (request.getName() != null && !request.getName().equals("")) {
+            userEntity.setName(request.getName());
+        }
+        if (request.getNickname() != null && !request.getNickname().equals("")) {
+            userEntity.setNickname(request.getNickname());
+        }
+
+        return UserUpdateResponse.of(userEntity);
+    }
+
+    private User validateUserId(Long userId) {
+        User findUser = userRepositoryJpa.findById(userId).orElseThrow(() -> {
+            throw new validationException("해당 유저를 찾을수 없습니다.");
+        });
+
+        return findUser;
     }
 }

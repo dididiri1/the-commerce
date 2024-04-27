@@ -1,6 +1,5 @@
 package sample.thecommerce.domain.user;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import sample.thecommerce.domain.BaseEntity;
 

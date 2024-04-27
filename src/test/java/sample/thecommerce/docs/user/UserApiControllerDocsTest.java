@@ -10,12 +10,13 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import sample.thecommerce.controller.api.user.UserApiController;
 import sample.thecommerce.docs.RestDocsSupport;
 import sample.thecommerce.dto.user.request.UserCreateRequest;
+import sample.thecommerce.dto.user.request.UserUpdateRequest;
 import sample.thecommerce.dto.user.response.UserCreateResponse;
 import sample.thecommerce.dto.user.response.UserResponse;
+import sample.thecommerce.dto.user.response.UserUpdateResponse;
 import sample.thecommerce.service.user.UserService;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -23,14 +24,10 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
-import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.request.RequestDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -132,7 +129,7 @@ public class UserApiControllerDocsTest extends RestDocsSupport {
                         .name("홍길동")
                         .tel("02123123")
                         .email("test@gmail.com")
-                        .createDateTime(LocalDateTime.of(2018,12,15,10,0,0))
+                        .createDateTime(LocalDateTime.of(2018, 12, 15, 10, 0, 0))
                         .build()
         );
         Page<UserResponse> result = new PageImpl<>(content, pageable, 2);
@@ -140,11 +137,7 @@ public class UserApiControllerDocsTest extends RestDocsSupport {
                 .willReturn(result);
 
         // when // then
-        this.mockMvc.perform(get("/api/user/list")
-                        .param("page", String.valueOf(pageable.getOffset()))
-                        .param("size", String.valueOf(pageable.getPageSize()))
-                        .param("sort", createDateTimeOrder)
-                        .param("sort", nameOrder)
+        this.mockMvc.perform(get("/api/user/list?page=0&size=10&sort=createDateTime,desc&sort=name,asc")
                 )
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -152,9 +145,9 @@ public class UserApiControllerDocsTest extends RestDocsSupport {
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         requestParameters(
-                                parameterWithName("page").description("페이지 번호"),
+                                parameterWithName("page").description("페이지 번호").optional(),
                                 parameterWithName("size").description("게시물 사이즈"),
-                                parameterWithName("sort").description("정렬 순서").optional()
+                                parameterWithName("sort").description("정렬 순서")
                         ),
                         responseFields(
                                 fieldWithPath("status").type(JsonFieldType.NUMBER)
@@ -182,9 +175,9 @@ public class UserApiControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.sort.unsorted").type(JsonFieldType.BOOLEAN).description("정렬 안됬는지 여부"),
                                 fieldWithPath("data.sort.sorted").type(JsonFieldType.BOOLEAN).description("정렬 됬는지 여부"),
                                 fieldWithPath("data.sort.empty").type(JsonFieldType.BOOLEAN).description("데이터가 비었는지 여부"),
-                                fieldWithPath("data.numberOfElements").type(JsonFieldType.NUMBER).description("현재페이지"),
-                                fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER).description("현재페이지"),
-                                fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER).description("페이지수"),
+                                fieldWithPath("data.numberOfElements").type(JsonFieldType.NUMBER).description("요청 페이지에서 조회된 데이터 개수"),
+                                fieldWithPath("data.totalPages").type(JsonFieldType.NUMBER).description("전체 페이지 개수"),
+                                fieldWithPath("data.totalElements").type(JsonFieldType.NUMBER).description("테이블 총 데이터 개수"),
                                 fieldWithPath("data.last").type(JsonFieldType.BOOLEAN).description("마지막 페이지인지 여부"),
                                 fieldWithPath("data.first").type(JsonFieldType.BOOLEAN).description("첫번째 페이지인지 여부"),
                                 fieldWithPath("data.number").type(JsonFieldType.NUMBER).description("현재 페이지 번호"),
@@ -193,4 +186,69 @@ public class UserApiControllerDocsTest extends RestDocsSupport {
                         )
                 ));
     }
+
+    @Test
+    @DisplayName("회원 정보를 수정 API")
+    void updateUser() throws Exception {
+        // given
+        long userId = 1L;
+
+        UserUpdateRequest request = UserUpdateRequest.builder()
+                .email("test2@gmail.com")
+                .name("김구라")
+                .nickname("춘식이")
+                .build();
+
+        given(userService.updateUser(any(Long.class), any(UserUpdateRequest.class)))
+                .willReturn(UserUpdateResponse.builder()
+                        .userId(1L)
+                        .username("testUser")
+                        .email("test2@gmail.com")
+                        .name("김구라")
+                        .nickname("춘식이")
+                        .build());
+
+        // expected
+        this.mockMvc.perform(patch("/api/user/{userId}", userId)
+                        .contentType(APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                )
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andDo(document("user-update",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        pathParameters(
+                                parameterWithName("userId").description("회원 ID")
+                        ),
+                        requestFields(
+                                fieldWithPath("email").type(JsonFieldType.STRING)
+                                        .description("이메일"),
+                                fieldWithPath("name").type(JsonFieldType.STRING)
+                                        .description("이름"),
+                                fieldWithPath("nickname").type(JsonFieldType.STRING)
+                                        .description("닉네임")
+                        ),
+                        responseFields (
+                                fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                        .description("상태 코드"),
+                                fieldWithPath("message").type(JsonFieldType.STRING)
+                                        .description("응답 메시지"),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("데이터")
+                        ).andWithPrefix("data.",
+                                fieldWithPath("userId").type(JsonFieldType.NUMBER)
+                                        .description("회원 ID"),
+                                fieldWithPath("username").type(JsonFieldType.STRING)
+                                        .description("사용자명"),
+                                fieldWithPath("name").type(JsonFieldType.STRING)
+                                        .description("이름"),
+                                fieldWithPath("email").type(JsonFieldType.STRING)
+                                        .description("이메일"),
+                                fieldWithPath("nickname").type(JsonFieldType.STRING)
+                                        .description("닉네임")
+                        )
+                ));
+    }
+
 }

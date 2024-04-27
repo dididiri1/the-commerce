@@ -13,8 +13,10 @@ import sample.thecommerce.domain.user.User;
 import sample.thecommerce.domain.user.UserQueryRepository;
 import sample.thecommerce.domain.user.UserRepositoryJpa;
 import sample.thecommerce.dto.user.request.UserCreateRequest;
+import sample.thecommerce.dto.user.request.UserUpdateRequest;
 import sample.thecommerce.dto.user.response.UserCreateResponse;
 import sample.thecommerce.dto.user.response.UserResponse;
+import sample.thecommerce.dto.user.response.UserUpdateResponse;
 import sample.thecommerce.handler.ex.validationException;
 
 import java.util.List;
@@ -22,8 +24,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.api.Assertions.tuple;
-import static org.springframework.test.util.AssertionErrors.assertEquals;
 
 public class UserServiceTest extends IntegrationTestSupport {
 
@@ -170,6 +170,29 @@ public class UserServiceTest extends IntegrationTestSupport {
                         tuple("member4", "name4"),
                         tuple("member3", "name3")
                 );
+    }
+
+    @DisplayName("회원을 수정 한다.")
+    @Test
+    void updateMember() throws Exception {
+        //given
+        User user = createUser("user1", "name1", "test1@example.com");
+        userRepositoryJpa.save(user);
+
+        UserUpdateRequest request = UserUpdateRequest.builder()
+                .email("test2@gmail.com")
+                .name("김구라")
+                .nickname("춘식이")
+                .build();
+
+        //when
+        UserUpdateResponse response = userService.updateUser(user.getId(), request);
+
+        //then
+        assertThat(response).isNotNull();
+        assertThat(response.getEmail()).isEqualTo("test2@gmail.com");
+        assertThat(response.getName()).isEqualTo("김구라");
+        assertThat(response.getNickname()).isEqualTo("춘식이");
     }
 
     private User createUser(String username, String name, String email) {

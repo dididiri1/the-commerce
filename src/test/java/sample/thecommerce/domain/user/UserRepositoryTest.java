@@ -25,17 +25,6 @@ public class UserRepositoryTest extends IntegrationTestSupport {
     @Autowired
     private UserQueryRepository userQueryRepository;
 
-    private User createUser(String username, String name, String email) {
-        return User.builder()
-                .username(username)
-                .password(new BCryptPasswordEncoder().encode("1234"))
-                .nickname("닉네임")
-                .name(name)
-                .tel("02123123")
-                .email(email)
-                .build();
-    }
-
     @DisplayName("회원 목록을 조회한다.")
     @Test
     void searchPageUsers() throws Exception {
@@ -61,4 +50,36 @@ public class UserRepositoryTest extends IntegrationTestSupport {
                         tuple("user1", "name1", "test1@example.com")
                 );
     }
+
+    @DisplayName("회원을 수정 한다.")
+    @Test
+    void updateUser() throws Exception {
+        //given
+        User user = createUser("user1", "name1", "test1@example.com");
+        userRepositoryJpa.save(user);
+
+        //when
+        User findUser = userRepositoryJpa.findById(user.getId()).orElse(null);
+        findUser.setEmail("test2@example.com");
+        findUser.setName("김구라");
+        findUser.setNickname("춘식이");
+
+        //then
+        assertThat(findUser).isNotNull();
+        assertThat(findUser.getEmail()).isEqualTo("test2@example.com");
+        assertThat(findUser.getName()).isEqualTo("김구라");
+    }
+
+    private User createUser(String username, String name, String email) {
+        return User.builder()
+                .username(username)
+                .password(new BCryptPasswordEncoder().encode("1234"))
+                .nickname("닉네임")
+                .name(name)
+                .tel("02123123")
+                .email(email)
+                .build();
+    }
+
+
 }

@@ -8,8 +8,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import sample.thecommerce.dto.ApiResponse;
 import sample.thecommerce.dto.user.request.UserCreateRequest;
+import sample.thecommerce.dto.user.request.UserUpdateRequest;
 import sample.thecommerce.dto.user.response.UserCreateResponse;
 import sample.thecommerce.dto.user.response.UserResponse;
+import sample.thecommerce.dto.user.response.UserUpdateResponse;
 import sample.thecommerce.service.user.UserService;
 
 import javax.validation.Valid;
@@ -38,10 +40,13 @@ public class UserApiController {
      */
     @GetMapping("/api/user/list")
     public ResponseEntity<?> getUsers(Pageable pageable) {
-        System.out.println("pageable.getSort() = " + pageable.getSort());
-
         Page<UserResponse> users = userService.getUsers(pageable);
-
         return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "회원 목록 조회 성공", users), HttpStatus.OK);
+    }
+
+    @PatchMapping("/api/user/{userId}")
+    public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId, @RequestBody UserUpdateRequest request) {
+        UserUpdateResponse response = userService.updateUser(userId, request);
+        return new ResponseEntity<>(new ApiResponse<>(HttpStatus.OK.value(), "회원 수정 성공", response), HttpStatus.OK);
     }
 }
